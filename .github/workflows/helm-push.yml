@@ -31,15 +31,14 @@ jobs:
             --username AWS \
             --password-stdin 914132589502.dkr.ecr.us-east-1.amazonaws.com
 
-      - name: Package Helm Chart
+      - name: Lint and Package Helm Chart
         run: |
           mkdir -p dist
-          helm lint .
-          helm package . -d dist
+          helm lint charts/base-app
+          helm package charts/base-app -d dist
 
       - name: Push Helm Chart to ECR
         run: |
           CHART_FILE=$(ls dist/*.tgz | head -n 1)
           echo "Pushing $CHART_FILE to ECR..."
-          helm push "$CHART_FILE" oci://914132589502.dkr.ecr.us-east-1.amazonaws.com/helm_charts_ecr
-            echo "Chart pushed successfully."
+          helm push "$CHART_FILE" oci://914132589502.dkr.ecr.us-east-1.amazonaws.com/helm
