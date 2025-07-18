@@ -1,0 +1,45 @@
+name: Package and Push Helm Chart to ECR
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  helm-package-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Extract short Git SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short=8 HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Set up AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR for Helm
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+          helm registry login \
+            --username AWS \
+            --password-stdin 914132589502.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Package Helm Chart
+        run: |
+          mkdir -p dist
+          helm lint .
+          helm package . -d dist
+
+      - name: Push Helm Chart to ECR
+        run: |
+          CHART_FILE=$(ls dist/*.tgz | head -n 1)
+          echo "Pushing $CHART_FILE to ECR..."
+          helm push "$CHART_FILE" oci://914132589502.dkr.ecr.us-east-1.amazonaws.com/helm_charts_ecr
+            echo "Chart pushed successfully."
