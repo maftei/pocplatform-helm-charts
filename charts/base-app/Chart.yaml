@@ -1,6 +1,9 @@
 apiVersion: v2
-name: helm_charts_ecr
-description: A reusable Helm chart for pocplatform services
-type: application
+name: base-app
 version: 0.1.0
 appVersion: "1.0"
+description: A reusable Helm chart for pocplatform services
+type: application
+
+
+

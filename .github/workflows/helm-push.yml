@@ -40,6 +40,6 @@ jobs:
       - name: Push Helm Chart to ECR
         run: |
           CHART_FILE=$(ls dist/*.tgz | head -n 1)
-          echo "Pushing $CHART_FILE to ECR..."
-          helm push "$CHART_FILE" oci://914132589502.dkr.ecr.us-east-1.amazonaws.com/helm_charts_ecr
+          echo "Pushing $CHART_FILE to base-app..."
+          helm push "$CHART_FILE" oci://914132589502.dkr.ecr.us-east-1.amazonaws.com/base-app
           echo "Chart pushed successfully."
