@@ -42,7 +42,6 @@ jobs:
           CHART_FILE=$(ls dist/*.tgz | head -n 1)
           CHART_NAME=$(helm show chart "$CHART_FILE" | grep '^name:' | awk '{print $2}')
           ECR_REPO="oci://914132589502.dkr.ecr.us-east-1.amazonaws.com"
-
           echo "Pushing $CHART_FILE to $ECR_REPO/$CHART_NAME..."
           helm push "$CHART_FILE" "$ECR_REPO/$CHART_NAME"
           echo "Chart pushed successfully."
